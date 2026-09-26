@@ -39,6 +39,7 @@
 				EncoreApp.swift,
 				Persistence.swift,
 				Repositories/ConcertRepository.swift,
+				UseCases/RecordAttendedConcert.swift,
 			);
 			target = 5EB923793067911B009D9A34 /* Encore */;
 		};
