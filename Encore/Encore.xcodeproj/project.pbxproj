@@ -29,12 +29,43 @@
 		5EB923963067911C009D9A34 /* EncoreUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EncoreUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		5EB9237C3067911B009D9A34 /* Encore */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Encore;
-			sourceTree = "<group>";
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		5EB923E630679785009D9A34 /* Exceptions for "Encore" folder in "Encore" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Assets.xcassets,
+				ContentView.swift,
+				Domain/Concert.swift,
+				EncoreApp.swift,
+				Persistence.swift,
+				Repositories/ConcertRepository.swift,
+			);
+			target = 5EB923793067911B009D9A34 /* Encore */;
 		};
+		5EB923E830679785009D9A34 /* Exceptions for "Encore" folder in "EncoreTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Assets.xcassets,
+				ContentView.swift,
+				Encore.xcdatamodeld,
+				EncoreApp.swift,
+				Persistence.swift,
+			);
+			target = 5EB9238B3067911C009D9A34 /* EncoreTests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		5EB923E730679785009D9A34 /* Exceptions for "Encore" folder in "Compile Sources" phase from "Encore" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = 5EB923763067911B009D9A34 /* Sources */;
+			membershipExceptions = (
+				Encore.xcdatamodeld,
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
 		5EB9238F3067911C009D9A34 /* EncoreTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = EncoreTests;
@@ -43,6 +74,16 @@
 		5EB923993067911C009D9A34 /* EncoreUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = EncoreUITests;
+			sourceTree = "<group>";
+		};
+		5EB923E030679784009D9A34 /* Encore */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				5EB923E630679785009D9A34 /* Exceptions for "Encore" folder in "Encore" target */,
+				5EB923E730679785009D9A34 /* Exceptions for "Encore" folder in "Compile Sources" phase from "Encore" target */,
+				5EB923E830679785009D9A34 /* Exceptions for "Encore" folder in "EncoreTests" target */,
+			);
+			path = Encore;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -69,7 +110,7 @@
 		5EB923713067911B009D9A34 = {
 			isa = PBXGroup;
 			children = (
-				5EB9237C3067911B009D9A34 /* Encore */,
+				5EB923E030679784009D9A34 /* Encore */,
 				5EB9238F3067911C009D9A34 /* EncoreTests */,
 				5EB923993067911C009D9A34 /* EncoreUITests */,
 				5EB9237B3067911B009D9A34 /* Products */,
@@ -99,9 +140,6 @@
 			);
 			buildRules = (
 			);
-			fileSystemSynchronizedGroups = (
-				5EB9237C3067911B009D9A34 /* Encore */,
-			);
 			name = Encore;
 			productName = Encore;
 			productReference = 5EB9237A3067911B009D9A34 /* Encore.app */;
@@ -122,6 +160,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				5EB9238F3067911C009D9A34 /* EncoreTests */,
+				5EB923E030679784009D9A34 /* Encore */,
 			);
 			name = EncoreTests;
 			productName = EncoreTests;
