@@ -13,6 +13,7 @@ final class ConcertLibraryViewModel: ObservableObject {
     @Published private(set) var concerts: [Concert] = []
     @Published var selectedYear: Int?
     @Published private(set) var errorMessage: String?
+    @Published private(set) var availableYears: [Int] = []
 
     private let browseHistory: BrowseConcertHistory
 
@@ -24,9 +25,26 @@ final class ConcertLibraryViewModel: ObservableObject {
         errorMessage = nil
 
         do {
-            concerts = try browseHistory.execute(
-                year: selectedYear
-            )
+            let allConcerts = try browseHistory.execute()
+
+            availableYears = Array(
+                Set(
+                    allConcerts.map {
+                        Calendar.current.component(
+                            .year,
+                            from: $0.concertDate
+                        )
+                    }
+                )
+            ).sorted(by: >)
+
+            if let selectedYear {
+                concerts = try browseHistory.execute(
+                    year: selectedYear
+                )
+            } else {
+                concerts = allConcerts
+            }
         } catch let error as BrowseConcertHistory.HistoryError {
             concerts = []
             errorMessage = error.errorDescription

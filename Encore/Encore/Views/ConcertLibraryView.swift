@@ -75,11 +75,35 @@ struct ConcertLibraryView: View {
                         Label("Add Concert", systemImage: "plus")
                     }
                 }
+                ToolbarItem(placement: .topBarLeading) {
+                    Menu {
+                        Picker(
+                            "Concert year",
+                            selection: $viewModel.selectedYear
+                        ) {
+                            Text("All Years")
+                                .tag(Int?.none)
+
+                            ForEach(viewModel.availableYears, id: \.self) { year in
+                                Text(String(year))
+                                    .tag(Optional(year))
+                            }
+                        }
+                    } label: {
+                        Label(
+                            viewModel.selectedYear.map { String($0) } ?? "All Years",
+                            systemImage: "line.3.horizontal.decrease"
+                        )
+                    }
+                }
             }
             .sheet(isPresented: $showingAddConcert) {
                 AddConcertView(recordConcert: recordConcert) {
                     viewModel.loadConcerts()
                 }
+            }
+            .onChange(of: viewModel.selectedYear) { _, _ in
+                viewModel.loadConcerts()
             }
             .onAppear {
                 viewModel.loadConcerts()
