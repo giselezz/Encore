@@ -6,16 +6,23 @@
 //
 
 import SwiftUI
-import CoreData
 
 @main
 struct EncoreApp: App {
-    let persistenceController = PersistenceController.shared
+    private let repository = CoreDataConcertRepository(
+        container: PersistenceController.shared.container
+    )
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+            ConcertLibraryView(
+                browseHistory: BrowseConcertHistory(
+                    repository: repository
+                ),
+                recordConcert: RecordAttendedConcert(
+                    repository: repository
+                )
+            )
         }
     }
 }

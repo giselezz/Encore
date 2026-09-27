@@ -40,7 +40,12 @@
 				Persistence.swift,
 				Repositories/ConcertRepository.swift,
 				Repositories/CoreDataConcertRepository.swift,
+				UseCases/BrowseConcertHistory.swift,
 				UseCases/RecordAttendedConcert.swift,
+				ViewModels/AddConcertViewModel.swift,
+				ViewModels/ConcertLibraryViewModel.swift,
+				Views/AddConcertView.swift,
+				Views/ConcertLibraryView.swift,
 			);
 			target = 5EB923793067911B009D9A34 /* Encore */;
 		};
