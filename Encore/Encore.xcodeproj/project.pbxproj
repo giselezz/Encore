@@ -58,6 +58,8 @@
 				EncoreApp.swift,
 				Persistence.swift,
 				Repositories/CoreDataConcertRepository.swift,
+				Views/AddConcertView.swift,
+				Views/ConcertLibraryView.swift,
 			);
 			target = 5EB9238B3067911C009D9A34 /* EncoreTests */;
 		};

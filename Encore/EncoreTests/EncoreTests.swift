@@ -125,4 +125,98 @@ final class EncoreTests: XCTestCase {
 
         XCTAssertEqual(repository.concerts, [concert])
     }
+    
+    func testBrowsingYearIncludesOnlyConcertsWithinThatYear() throws {
+        let repository = MockConcertRepository()
+        let useCase = BrowseConcertHistory(repository: repository)
+
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(secondsFromGMT: 0))
+
+        let startOf2024 = try XCTUnwrap(
+            calendar.date(
+                from: DateComponents(year: 2024, month: 1, day: 1)
+            )
+        )
+        let startOf2025 = try XCTUnwrap(
+            calendar.date(
+                from: DateComponents(year: 2025, month: 1, day: 1)
+            )
+        )
+
+        func concert(on date: Date) -> Concert {
+            Concert(
+                id: UUID(),
+                artistName: "Test Artist",
+                venueName: "Test Venue",
+                concertDate: date,
+                createdAt: startOf2025
+            )
+        }
+
+        let previousYear = concert(
+            on: startOf2024.addingTimeInterval(-1)
+        )
+        let firstOfYear = concert(on: startOf2024)
+        let lastOfYear = concert(
+            on: startOf2025.addingTimeInterval(-1)
+        )
+        let followingYear = concert(on: startOf2025)
+
+        repository.concerts = [
+            previousYear,
+            firstOfYear,
+            lastOfYear,
+            followingYear
+        ]
+
+        let results = try useCase.execute(
+            year: 2024,
+            now: startOf2025,
+            calendar: calendar
+        )
+
+        XCTAssertEqual(results, [lastOfYear, firstOfYear])
+    }
+    
+    func testBrowsingFutureConcertYearIsRejected() throws {
+        let repository = MockConcertRepository()
+        let useCase = BrowseConcertHistory(repository: repository)
+
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try XCTUnwrap(TimeZone(secondsFromGMT: 0))
+
+        let now = try XCTUnwrap(
+            calendar.date(
+                from: DateComponents(year: 2025, month: 6, day: 1)
+            )
+        )
+
+        XCTAssertThrowsError(
+            try useCase.execute(
+                year: 2026,
+                now: now,
+                calendar: calendar
+            )
+        ) { error in
+            XCTAssertEqual(
+                error as? BrowseConcertHistory.HistoryError,
+                .futureYear
+            )
+        }
+    }
+
+    func testBrowsingInvalidConcertYearIsRejected() {
+        let repository = MockConcertRepository()
+        let useCase = BrowseConcertHistory(repository: repository)
+
+        XCTAssertThrowsError(
+            try useCase.execute(year: 0)
+        ) { error in
+            XCTAssertEqual(
+                error as? BrowseConcertHistory.HistoryError,
+                .invalidYear
+            )
+        }
+    }
 }
