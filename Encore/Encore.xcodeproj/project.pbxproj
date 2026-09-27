@@ -39,6 +39,7 @@
 				EncoreApp.swift,
 				Persistence.swift,
 				Repositories/ConcertRepository.swift,
+				Repositories/CoreDataConcertRepository.swift,
 				UseCases/RecordAttendedConcert.swift,
 			);
 			target = 5EB923793067911B009D9A34 /* Encore */;
@@ -51,6 +52,7 @@
 				Encore.xcdatamodeld,
 				EncoreApp.swift,
 				Persistence.swift,
+				Repositories/CoreDataConcertRepository.swift,
 			);
 			target = 5EB9238B3067911C009D9A34 /* EncoreTests */;
 		};
