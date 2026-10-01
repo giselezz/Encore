@@ -43,6 +43,7 @@
 				Repositories/ConcertMemoryRepository.swift,
 				Repositories/ConcertRepository.swift,
 				Repositories/CoreDataConcertRepository.swift,
+				UseCases/AddConcertMemory.swift,
 				UseCases/BrowseConcertHistory.swift,
 				UseCases/RecordAttendedConcert.swift,
 				ViewModels/AddConcertViewModel.swift,

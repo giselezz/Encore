@@ -219,4 +219,46 @@ final class EncoreTests: XCTestCase {
             )
         }
     }
+    
+    func testAddingWrittenMemorySavesItToItsConcert() throws {
+        let repository = MockConcertMemoryRepository()
+        let useCase = AddConcertMemory(repository: repository)
+        let concertID = UUID()
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+
+        let memory = try useCase.execute(
+            concertID: concertID,
+            caption: "  Everyone sang the final chorus together.  ",
+            now: now
+        )
+
+        XCTAssertEqual(memory.concertID, concertID)
+        XCTAssertEqual(
+            memory.caption,
+            "Everyone sang the final chorus together."
+        )
+        XCTAssertNil(memory.photoFilename)
+        XCTAssertEqual(memory.createdAt, now)
+        XCTAssertEqual(repository.memories, [memory])
+    }
+
+    func testAddingMemoryWithoutTextOrPhotoIsRejected() {
+        let repository = MockConcertMemoryRepository()
+        let useCase = AddConcertMemory(repository: repository)
+
+        XCTAssertThrowsError(
+            try useCase.execute(
+                concertID: UUID(),
+                caption: " \n ",
+                photoFilename: "   "
+            )
+        ) { error in
+            XCTAssertEqual(
+                error as? AddConcertMemory.MemoryError,
+                .emptyMemory
+            )
+        }
+
+        XCTAssertTrue(repository.memories.isEmpty)
+    }
 }

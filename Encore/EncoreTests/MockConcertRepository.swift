@@ -32,3 +32,25 @@ final class MockConcertRepository: ConcertRepository {
         }
     }
 }
+
+final class MockConcertMemoryRepository: ConcertMemoryRepository {
+    var memories: [ConcertMoment] = []
+
+    func saveMemory(_ memory: ConcertMoment) throws {
+        if let index = memories.firstIndex(where: {
+            $0.id == memory.id
+        }) {
+            memories[index] = memory
+        } else {
+            memories.append(memory)
+        }
+    }
+
+    func fetchMemories(
+        for concertID: UUID
+    ) throws -> [ConcertMoment] {
+        memories
+            .filter { $0.concertID == concertID }
+            .sorted { $0.createdAt > $1.createdAt }
+    }
+}
