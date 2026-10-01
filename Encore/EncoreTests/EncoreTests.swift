@@ -262,3 +262,4 @@ final class EncoreTests: XCTestCase {
         XCTAssertTrue(repository.memories.isEmpty)
     }
 }
+

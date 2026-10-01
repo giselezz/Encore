@@ -12,7 +12,7 @@
         <attribute name="caption" optional="YES" attributeType="String"/>
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="photoFileName" optional="YES" attributeType="String"/>
+        <attribute name="photoFilename" optional="YES" attributeType="String"/>
         <relationship name="concert" maxCount="1" deletionRule="Nullify" destinationEntity="ConcertEntry" inverseName="memories" inverseEntity="ConcertEntry"/>
     </entity>
     <entity name="Item" representedClassName="Item" syncable="YES" codeGenerationType="class">
