@@ -36,9 +36,11 @@
 				Assets.xcassets,
 				ContentView.swift,
 				Domain/Concert.swift,
+				Domain/ConcertMoment.swift,
 				Encore.xcdatamodeld,
 				EncoreApp.swift,
 				Persistence.swift,
+				Repositories/ConcertMemoryRepository.swift,
 				Repositories/ConcertRepository.swift,
 				Repositories/CoreDataConcertRepository.swift,
 				UseCases/BrowseConcertHistory.swift,
@@ -46,8 +48,8 @@
 				ViewModels/AddConcertViewModel.swift,
 				ViewModels/ConcertLibraryViewModel.swift,
 				Views/AddConcertView.swift,
+				Views/ConcertDetailView.swift,
 				Views/ConcertLibraryView.swift,
-				Views/SwiftUIView.swift,
 			);
 			target = 5EB923793067911B009D9A34 /* Encore */;
 		};
@@ -61,8 +63,8 @@
 				Persistence.swift,
 				Repositories/CoreDataConcertRepository.swift,
 				Views/AddConcertView.swift,
+				Views/ConcertDetailView.swift,
 				Views/ConcertLibraryView.swift,
-				Views/SwiftUIView.swift,
 			);
 			target = 5EB9238B3067911C009D9A34 /* EncoreTests */;
 		};
