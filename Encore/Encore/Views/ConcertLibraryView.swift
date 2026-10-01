@@ -48,21 +48,25 @@ struct ConcertLibraryView: View {
                     )
                 } else {
                     List(viewModel.concerts) { concert in
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text(concert.artistName)
-                                .font(.headline)
+                        NavigationLink {
+                            ConcertDetailView(concert: concert)
+                        } label: {
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text(concert.artistName)
+                                    .font(.headline)
 
-                            Text(concert.venueName)
-                                .font(.subheadline)
+                                Text(concert.venueName)
+                                    .font(.subheadline)
 
-                            Text(
-                                concert.concertDate,
-                                format: .dateTime.day().month().year()
-                            )
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                                Text(
+                                    concert.concertDate,
+                                    format: .dateTime.day().month().year()
+                                )
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                            }
+                            .padding(.vertical, 4)
                         }
-                        .padding(.vertical, 4)
                     }
                 }
             }
