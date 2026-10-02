@@ -3,7 +3,7 @@
 A concert journal iOS app for saving photos, memories, and details from live shows. 
 
 ## Problem
-Concertgoers can have photos and personal notes scattered across different apps, making it difficult to revisit the full memory of a show. 
+Music lovers can have photos and personal notes scattered across different apps, making it difficult to revisit the full memory of a show. 
 
 ## Target User
 A music lover who goes to concert regularly and wants to organise & revisit their concert memories. 
