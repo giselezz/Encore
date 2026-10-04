@@ -44,6 +44,8 @@
 				Repositories/ConcertRepository.swift,
 				Repositories/CoreDataConcertMemoryRepository.swift,
 				Repositories/CoreDataConcertRepository.swift,
+				Storage/ConcertPhotoStorage.swift,
+				Storage/LocalConcertPhotoStorage.swift,
 				UseCases/AddConcertMemory.swift,
 				UseCases/BrowseConcertHistory.swift,
 				UseCases/RecordAttendedConcert.swift,
