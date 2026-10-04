@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		5EB925473071FD25009D9A34 /* EncoreShare.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5EB9253D3071FD24009D9A34 /* EncoreShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		5EB926453072220C009D9A34 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EB926443072220B009D9A34 /* WidgetKit.framework */; };
+		5EB926473072220C009D9A34 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EB926463072220C009D9A34 /* SwiftUI.framework */; };
+		5EB926523072220C009D9A34 /* EncoreWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5EB926423072220B009D9A34 /* EncoreWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,6 +35,13 @@
 			remoteGlobalIDString = 5EB9253C3071FD24009D9A34;
 			remoteInfo = EncoreShare;
 		};
+		5EB926503072220C009D9A34 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5EB923723067911B009D9A34 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5EB926413072220B009D9A34;
+			remoteInfo = EncoreWidgetExtension;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -40,6 +50,7 @@
 			dstPath = "";
 			dstSubfolder = PlugIns;
 			files = (
+				5EB926523072220C009D9A34 /* EncoreWidgetExtension.appex in Embed Foundation Extensions */,
 				5EB925473071FD25009D9A34 /* EncoreShare.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
@@ -51,6 +62,10 @@
 		5EB9238C3067911C009D9A34 /* EncoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EncoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5EB923963067911C009D9A34 /* EncoreUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EncoreUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5EB9253D3071FD24009D9A34 /* EncoreShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = EncoreShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		5EB926423072220B009D9A34 /* EncoreWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = EncoreWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		5EB926443072220B009D9A34 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		5EB926463072220C009D9A34 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		5EB926573072226E009D9A34 /* EncoreWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = EncoreWidgetExtension.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -144,6 +159,13 @@
 			);
 			target = 5EB9253C3071FD24009D9A34 /* EncoreShare */;
 		};
+		5EB926563072220C009D9A34 /* Exceptions for "EncoreWidget" folder in "EncoreWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 5EB926413072220B009D9A34 /* EncoreWidgetExtension */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -175,6 +197,14 @@
 			path = EncoreShare;
 			sourceTree = "<group>";
 		};
+		5EB926483072220C009D9A34 /* EncoreWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				5EB926563072220C009D9A34 /* Exceptions for "EncoreWidget" folder in "EncoreWidgetExtension" target */,
+			);
+			path = EncoreWidget;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -198,16 +228,26 @@
 			files = (
 			);
 		};
+		5EB9263F3072220B009D9A34 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+				5EB926473072220C009D9A34 /* SwiftUI.framework in Frameworks */,
+				5EB926453072220C009D9A34 /* WidgetKit.framework in Frameworks */,
+			);
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		5EB923713067911B009D9A34 = {
 			isa = PBXGroup;
 			children = (
+				5EB926573072226E009D9A34 /* EncoreWidgetExtension.entitlements */,
 				5EB923E030679784009D9A34 /* Encore */,
 				5EB9238F3067911C009D9A34 /* EncoreTests */,
 				5EB923993067911C009D9A34 /* EncoreUITests */,
 				5EB9253E3071FD24009D9A34 /* EncoreShare */,
+				5EB926483072220C009D9A34 /* EncoreWidget */,
+				5EB926433072220B009D9A34 /* Frameworks */,
 				5EB9237B3067911B009D9A34 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -219,8 +259,18 @@
 				5EB9238C3067911C009D9A34 /* EncoreTests.xctest */,
 				5EB923963067911C009D9A34 /* EncoreUITests.xctest */,
 				5EB9253D3071FD24009D9A34 /* EncoreShare.appex */,
+				5EB926423072220B009D9A34 /* EncoreWidgetExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		5EB926433072220B009D9A34 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5EB926443072220B009D9A34 /* WidgetKit.framework */,
+				5EB926463072220C009D9A34 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -239,6 +289,7 @@
 			);
 			dependencies = (
 				5EB925463071FD25009D9A34 /* PBXTargetDependency */,
+				5EB926513072220C009D9A34 /* PBXTargetDependency */,
 			);
 			name = Encore;
 			productName = Encore;
@@ -306,6 +357,24 @@
 			productReference = 5EB9253D3071FD24009D9A34 /* EncoreShare.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		5EB926413072220B009D9A34 /* EncoreWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5EB926553072220C009D9A34 /* Build configuration list for PBXNativeTarget "EncoreWidgetExtension" */;
+			buildPhases = (
+				5EB9263E3072220B009D9A34 /* Sources */,
+				5EB9263F3072220B009D9A34 /* Frameworks */,
+				5EB926403072220B009D9A34 /* Resources */,
+			);
+			buildRules = (
+			);
+			fileSystemSynchronizedGroups = (
+				5EB926483072220C009D9A34 /* EncoreWidget */,
+			);
+			name = EncoreWidgetExtension;
+			productName = EncoreWidgetExtension;
+			productReference = 5EB926423072220B009D9A34 /* EncoreWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -330,6 +399,9 @@
 					5EB9253C3071FD24009D9A34 = {
 						CreatedOnToolsVersion = 27.0;
 					};
+					5EB926413072220B009D9A34 = {
+						CreatedOnToolsVersion = 27.0;
+					};
 				};
 			};
 			buildConfigurationList = 5EB923753067911B009D9A34 /* Build configuration list for PBXProject "Encore" */;
@@ -350,6 +422,7 @@
 				5EB9238B3067911C009D9A34 /* EncoreTests */,
 				5EB923953067911C009D9A34 /* EncoreUITests */,
 				5EB9253C3071FD24009D9A34 /* EncoreShare */,
+				5EB926413072220B009D9A34 /* EncoreWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -371,6 +444,11 @@
 			);
 		};
 		5EB9253B3071FD24009D9A34 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
+		5EB926403072220B009D9A34 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
 			);
@@ -398,6 +476,11 @@
 			files = (
 			);
 		};
+		5EB9263E3072220B009D9A34 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -415,6 +498,11 @@
 			isa = PBXTargetDependency;
 			target = 5EB9253C3071FD24009D9A34 /* EncoreShare */;
 			targetProxy = 5EB925453071FD25009D9A34 /* PBXContainerItemProxy */;
+		};
+		5EB926513072220C009D9A34 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5EB926413072220B009D9A34 /* EncoreWidgetExtension */;
+			targetProxy = 5EB926503072220C009D9A34 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -752,6 +840,70 @@
 			};
 			name = Release;
 		};
+		5EB926533072220C009D9A34 /* Debug configuration for PBXNativeTarget "EncoreWidgetExtension" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = EncoreWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2D9XXH2B99;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = EncoreWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = EncoreWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yufan.Encore.EncoreWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5EB926543072220C009D9A34 /* Release configuration for PBXNativeTarget "EncoreWidgetExtension" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = EncoreWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2D9XXH2B99;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = EncoreWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = EncoreWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yufan.Encore.EncoreWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -792,6 +944,14 @@
 			buildConfigurations = (
 				5EB925493071FD25009D9A34 /* Debug configuration for PBXNativeTarget "EncoreShare" */,
 				5EB9254A3071FD25009D9A34 /* Release configuration for PBXNativeTarget "EncoreShare" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		5EB926553072220C009D9A34 /* Build configuration list for PBXNativeTarget "EncoreWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5EB926533072220C009D9A34 /* Debug configuration for PBXNativeTarget "EncoreWidgetExtension" */,
+				5EB926543072220C009D9A34 /* Release configuration for PBXNativeTarget "EncoreWidgetExtension" */,
 			);
 			defaultConfigurationName = Release;
 		};
