@@ -8,6 +8,10 @@
 import Foundation
 @testable import Encore
 
+enum MockStorageError: Error {
+    case simulatedFailure
+}
+
 final class MockConcertRepository: ConcertRepository {
     var concerts: [Concert] = []
 
@@ -35,8 +39,12 @@ final class MockConcertRepository: ConcertRepository {
 
 final class MockConcertMemoryRepository: ConcertMemoryRepository {
     var memories: [ConcertMoment] = []
+    var shouldFailSave = false
 
     func saveMemory(_ memory: ConcertMoment) throws {
+        if shouldFailSave {
+            throw MockStorageError.simulatedFailure
+        }
         if let index = memories.firstIndex(where: {
             $0.id == memory.id
         }) {
@@ -57,8 +65,13 @@ final class MockConcertMemoryRepository: ConcertMemoryRepository {
 
 final class MockConcertPhotoStorage: ConcertPhotoStorage {
     var photos: [String: Data] = [:]
+    var shouldFailSave = false
+    var deletedPhotoFilenames: [String] = []
 
     func savePhoto(_ data: Data) throws -> String {
+        if shouldFailSave {
+            throw MockStorageError.simulatedFailure
+        }
         let filename = UUID().uuidString + ".jpg"
         photos[filename] = data
         return filename
@@ -73,6 +86,7 @@ final class MockConcertPhotoStorage: ConcertPhotoStorage {
     }
 
     func deletePhoto(named filename: String) throws {
+        deletedPhotoFilenames.append(filename)
         photos.removeValue(forKey: filename)
     }
 }
