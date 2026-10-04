@@ -104,7 +104,8 @@ struct AddConcertMemoryView: View {
         AddConcertMemoryView(
             concert: concert,
             addMemory: AddConcertMemory(
-                repository: memoryRepository
+                repository: memoryRepository, 
+                photoStorage: LocalConcertPhotoStorage()
             ),
             onSaved: {}
         )

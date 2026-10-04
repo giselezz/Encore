@@ -118,7 +118,8 @@ struct ConcertDetailView: View {
                 repository: repository
             ),
             addMemory: AddConcertMemory(
-                repository: repository
+                repository: repository, 
+                photoStorage: LocalConcertPhotoStorage()
             )
         )
     }

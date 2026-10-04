@@ -222,7 +222,7 @@ final class EncoreTests: XCTestCase {
     
     func testAddingWrittenMemorySavesItToItsConcert() throws {
         let repository = MockConcertMemoryRepository()
-        let useCase = AddConcertMemory(repository: repository)
+        let useCase = AddConcertMemory(repository: repository, photoStorage: MockConcertPhotoStorage())
         let concertID = UUID()
         let now = Date(timeIntervalSince1970: 1_700_000_000)
 
@@ -244,13 +244,13 @@ final class EncoreTests: XCTestCase {
 
     func testAddingMemoryWithoutTextOrPhotoIsRejected() {
         let repository = MockConcertMemoryRepository()
-        let useCase = AddConcertMemory(repository: repository)
+        let useCase = AddConcertMemory(repository: repository, photoStorage: MockConcertPhotoStorage())
 
         XCTAssertThrowsError(
             try useCase.execute(
                 concertID: UUID(),
                 caption: " \n ",
-                photoFilename: "   "
+                photoData: nil
             )
         ) { error in
             XCTAssertEqual(
@@ -260,6 +260,30 @@ final class EncoreTests: XCTestCase {
         }
 
         XCTAssertTrue(repository.memories.isEmpty)
+    }
+    
+    func testAddingPhotoOnlyMemoryStoresPhotoAndItsFilename() throws {
+        let repository = MockConcertMemoryRepository()
+        let photoStorage = MockConcertPhotoStorage()
+        let useCase = AddConcertMemory(
+            repository: repository,
+            photoStorage: photoStorage
+        )
+        let concertID = UUID()
+        let photoData = Data([1, 2, 3])
+
+        let memory = try useCase.execute(
+            concertID: concertID,
+            caption: "",
+            photoData: photoData
+        )
+
+        let filename = try XCTUnwrap(memory.photoFilename)
+
+        XCTAssertNil(memory.caption)
+        XCTAssertEqual(memory.concertID, concertID)
+        XCTAssertEqual(photoStorage.photos[filename], photoData)
+        XCTAssertEqual(repository.memories, [memory])
     }
 }
 

@@ -72,6 +72,7 @@
 				Repositories/CoreDataConcertMemoryRepository.swift,
 				Repositories/CoreDataConcertRepository.swift,
 				UseCases/RevisitConcertMemories.swift,
+				ViewModels/ConcertDetailViewModel.swift,
 				Views/AddConcertMemoryView.swift,
 				Views/AddConcertView.swift,
 				Views/ConcertDetailView.swift,

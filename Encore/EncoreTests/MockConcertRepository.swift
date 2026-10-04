@@ -54,3 +54,25 @@ final class MockConcertMemoryRepository: ConcertMemoryRepository {
             .sorted { $0.createdAt > $1.createdAt }
     }
 }
+
+final class MockConcertPhotoStorage: ConcertPhotoStorage {
+    var photos: [String: Data] = [:]
+
+    func savePhoto(_ data: Data) throws -> String {
+        let filename = UUID().uuidString + ".jpg"
+        photos[filename] = data
+        return filename
+    }
+
+    func loadPhoto(named filename: String) throws -> Data {
+        guard let data = photos[filename] else {
+            throw CocoaError(.fileReadNoSuchFile)
+        }
+
+        return data
+    }
+
+    func deletePhoto(named filename: String) throws {
+        photos.removeValue(forKey: filename)
+    }
+}

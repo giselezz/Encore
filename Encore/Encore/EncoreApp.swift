@@ -30,7 +30,8 @@ struct EncoreApp: App {
                     repository: memoryRepository
                 ),
                 addMemory: AddConcertMemory(
-                    repository: memoryRepository
+                    repository: memoryRepository, 
+                    photoStorage: LocalConcertPhotoStorage()
                 )
             )
         }
