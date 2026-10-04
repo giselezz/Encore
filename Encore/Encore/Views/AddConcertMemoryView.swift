@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import PhotosUI
 
 struct AddConcertMemoryView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel: AddConcertMemoryViewModel
+    @State private var selectedPhoto: PhotosPickerItem?
 
     private let artistName: String
     private let onSaved: () -> Void
@@ -32,6 +34,38 @@ struct AddConcertMemoryView: View {
     var body: some View {
         NavigationStack {
             Form {
+                Section("Photo") {
+                    if let image = viewModel.photoPreview {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(maxHeight: 240)
+                            .accessibilityLabel("Selected concert photo")
+                    }
+
+                    if viewModel.isLoadingPhoto {
+                        ProgressView("Loading photo…")
+                    }
+
+                    PhotosPicker(
+                        selection: $selectedPhoto,
+                        matching: .images
+                    ) {
+                        Label(
+                            viewModel.photoPreview == nil
+                                ? "Add Photo"
+                                : "Change Photo",
+                            systemImage: "photo"
+                        )
+                    }
+
+                    if selectedPhoto != nil {
+                        Button("Remove Photo", role: .destructive) {
+                            selectedPhoto = nil
+                        }
+                    }
+                }
+                
                 Section {
                     TextEditor(text: $viewModel.caption)
                         .frame(minHeight: 160)
@@ -51,6 +85,9 @@ struct AddConcertMemoryView: View {
                     }
                 }
             }
+            .task(id: selectedPhoto) {
+                await viewModel.loadPhoto(from: selectedPhoto)
+            }
             .navigationTitle("Add Memory")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -67,6 +104,7 @@ struct AddConcertMemoryView: View {
                             dismiss()
                         }
                     }
+                    .disabled(viewModel.isLoadingPhoto)
                 }
             }
         }
