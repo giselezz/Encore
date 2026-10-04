@@ -9,7 +9,11 @@ import SwiftUI
 
 @main
 struct EncoreApp: App {
-    private let repository = CoreDataConcertRepository(
+    private let concertRepository = CoreDataConcertRepository(
+        container: PersistenceController.shared.container
+    )
+
+    private let memoryRepository = CoreDataConcertMemoryRepository(
         container: PersistenceController.shared.container
     )
 
@@ -17,10 +21,18 @@ struct EncoreApp: App {
         WindowGroup {
             ConcertLibraryView(
                 browseHistory: BrowseConcertHistory(
-                    repository: repository
+                    repository: concertRepository
                 ),
                 recordConcert: RecordAttendedConcert(
-                    repository: repository
+                    repository: concertRepository
+                ),
+                revisitMemories: RevisitConcertMemories(
+                    repository: memoryRepository, 
+                    photoStorage: LocalConcertPhotoStorage()
+                ),
+                addMemory: AddConcertMemory(
+                    repository: memoryRepository, 
+                    photoStorage: LocalConcertPhotoStorage()
                 )
             )
         }

@@ -36,15 +36,27 @@
 				Assets.xcassets,
 				ContentView.swift,
 				Domain/Concert.swift,
+				Domain/ConcertMoment.swift,
+				Encore.xcdatamodeld,
 				EncoreApp.swift,
 				Persistence.swift,
+				Repositories/ConcertMemoryRepository.swift,
 				Repositories/ConcertRepository.swift,
+				Repositories/CoreDataConcertMemoryRepository.swift,
 				Repositories/CoreDataConcertRepository.swift,
+				Storage/ConcertPhotoStorage.swift,
+				Storage/LocalConcertPhotoStorage.swift,
+				UseCases/AddConcertMemory.swift,
 				UseCases/BrowseConcertHistory.swift,
 				UseCases/RecordAttendedConcert.swift,
+				UseCases/RevisitConcertMemories.swift,
+				ViewModels/AddConcertMemoryViewModel.swift,
 				ViewModels/AddConcertViewModel.swift,
+				ViewModels/ConcertDetailViewModel.swift,
 				ViewModels/ConcertLibraryViewModel.swift,
+				Views/AddConcertMemoryView.swift,
 				Views/AddConcertView.swift,
+				Views/ConcertDetailView.swift,
 				Views/ConcertLibraryView.swift,
 			);
 			target = 5EB923793067911B009D9A34 /* Encore */;
@@ -54,26 +66,33 @@
 			membershipExceptions = (
 				Assets.xcassets,
 				ContentView.swift,
+				Domain/Concert.swift,
+				Domain/ConcertMoment.swift,
 				Encore.xcdatamodeld,
 				EncoreApp.swift,
 				Persistence.swift,
+				Repositories/ConcertMemoryRepository.swift,
+				Repositories/ConcertRepository.swift,
+				Repositories/CoreDataConcertMemoryRepository.swift,
 				Repositories/CoreDataConcertRepository.swift,
+				Storage/ConcertPhotoStorage.swift,
+				Storage/LocalConcertPhotoStorage.swift,
+				UseCases/AddConcertMemory.swift,
+				UseCases/BrowseConcertHistory.swift,
+				UseCases/RecordAttendedConcert.swift,
+				UseCases/RevisitConcertMemories.swift,
+				ViewModels/AddConcertMemoryViewModel.swift,
+				ViewModels/AddConcertViewModel.swift,
+				ViewModels/ConcertDetailViewModel.swift,
+				ViewModels/ConcertLibraryViewModel.swift,
+				Views/AddConcertMemoryView.swift,
 				Views/AddConcertView.swift,
+				Views/ConcertDetailView.swift,
 				Views/ConcertLibraryView.swift,
 			);
 			target = 5EB9238B3067911C009D9A34 /* EncoreTests */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		5EB923E730679785009D9A34 /* Exceptions for "Encore" folder in "Compile Sources" phase from "Encore" target */ = {
-			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			buildPhase = 5EB923763067911B009D9A34 /* Sources */;
-			membershipExceptions = (
-				Encore.xcdatamodeld,
-			);
-		};
-/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		5EB9238F3067911C009D9A34 /* EncoreTests */ = {
@@ -90,7 +109,6 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				5EB923E630679785009D9A34 /* Exceptions for "Encore" folder in "Encore" target */,
-				5EB923E730679785009D9A34 /* Exceptions for "Encore" folder in "Compile Sources" phase from "Encore" target */,
 				5EB923E830679785009D9A34 /* Exceptions for "Encore" folder in "EncoreTests" target */,
 			);
 			path = Encore;

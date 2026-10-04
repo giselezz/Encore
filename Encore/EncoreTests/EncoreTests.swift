@@ -219,4 +219,168 @@ final class EncoreTests: XCTestCase {
             )
         }
     }
+    
+    func testAddingWrittenMemorySavesItToItsConcert() throws {
+        let repository = MockConcertMemoryRepository()
+        let useCase = AddConcertMemory(repository: repository, photoStorage: MockConcertPhotoStorage())
+        let concertID = UUID()
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+
+        let memory = try useCase.execute(
+            concertID: concertID,
+            caption: "  Everyone sang the final chorus together.  ",
+            now: now
+        )
+
+        XCTAssertEqual(memory.concertID, concertID)
+        XCTAssertEqual(
+            memory.caption,
+            "Everyone sang the final chorus together."
+        )
+        XCTAssertNil(memory.photoFilename)
+        XCTAssertEqual(memory.createdAt, now)
+        XCTAssertEqual(repository.memories, [memory])
+    }
+
+    func testAddingMemoryWithoutTextOrPhotoIsRejected() {
+        let repository = MockConcertMemoryRepository()
+        let useCase = AddConcertMemory(repository: repository, photoStorage: MockConcertPhotoStorage())
+
+        XCTAssertThrowsError(
+            try useCase.execute(
+                concertID: UUID(),
+                caption: " \n ",
+                photoData: nil
+            )
+        ) { error in
+            XCTAssertEqual(
+                error as? AddConcertMemory.MemoryError,
+                .emptyMemory
+            )
+        }
+
+        XCTAssertTrue(repository.memories.isEmpty)
+    }
+    
+    func testAddingPhotoOnlyMemoryStoresPhotoAndItsFilename() throws {
+        let repository = MockConcertMemoryRepository()
+        let photoStorage = MockConcertPhotoStorage()
+        let useCase = AddConcertMemory(
+            repository: repository,
+            photoStorage: photoStorage
+        )
+        let concertID = UUID()
+        let photoData = Data([1, 2, 3])
+
+        let memory = try useCase.execute(
+            concertID: concertID,
+            caption: "",
+            photoData: photoData
+        )
+
+        let filename = try XCTUnwrap(memory.photoFilename)
+
+        XCTAssertNil(memory.caption)
+        XCTAssertEqual(memory.concertID, concertID)
+        XCTAssertEqual(photoStorage.photos[filename], photoData)
+        XCTAssertEqual(repository.memories, [memory])
+    }
+    
+    func testFailedMemorySaveRemovesItsNewPhoto() {
+        let repository = MockConcertMemoryRepository()
+        repository.shouldFailSave = true
+
+        let photoStorage = MockConcertPhotoStorage()
+        let useCase = AddConcertMemory(
+            repository: repository,
+            photoStorage: photoStorage
+        )
+
+        XCTAssertThrowsError(
+            try useCase.execute(
+                concertID: UUID(),
+                caption: "The encore",
+                photoData: Data([1, 2, 3])
+            )
+        ) { error in
+            XCTAssertEqual(
+                error as? AddConcertMemory.MemoryError,
+                .savingFailed
+            )
+        }
+
+        XCTAssertTrue(repository.memories.isEmpty)
+        XCTAssertTrue(photoStorage.photos.isEmpty)
+        XCTAssertEqual(photoStorage.deletedPhotoFilenames.count, 1)
+    }
+
+    func testFailedPhotoSaveDoesNotCreateMemory() {
+        let repository = MockConcertMemoryRepository()
+        let photoStorage = MockConcertPhotoStorage()
+        photoStorage.shouldFailSave = true
+
+        let useCase = AddConcertMemory(
+            repository: repository,
+            photoStorage: photoStorage
+        )
+
+        XCTAssertThrowsError(
+            try useCase.execute(
+                concertID: UUID(),
+                caption: "My favourite song",
+                photoData: Data([1, 2, 3])
+            )
+        ) { error in
+            XCTAssertEqual(
+                error as? AddConcertMemory.MemoryError,
+                .photoSavingFailed
+            )
+        }
+
+        XCTAssertTrue(repository.memories.isEmpty)
+        XCTAssertTrue(photoStorage.photos.isEmpty)
+        XCTAssertTrue(photoStorage.deletedPhotoFilenames.isEmpty)
+    }
+
+    func testRevisitingConcertShowsOnlyItsMemoriesNewestFirst() throws {
+        let repository = MockConcertMemoryRepository()
+        let concertID = UUID()
+        let date = Date(timeIntervalSince1970: 1_700_000_000)
+
+        let earlier = ConcertMoment(
+            id: UUID(),
+            concertID: concertID,
+            caption: "Opening song",
+            photoFilename: nil,
+            createdAt: date
+        )
+
+        let later = ConcertMoment(
+            id: UUID(),
+            concertID: concertID,
+            caption: "Final encore",
+            photoFilename: nil,
+            createdAt: date.addingTimeInterval(60)
+        )
+
+        let anotherConcert = ConcertMoment(
+            id: UUID(),
+            concertID: UUID(),
+            caption: "A different show",
+            photoFilename: nil,
+            createdAt: date
+        )
+
+        repository.memories = [earlier, anotherConcert, later]
+
+        let useCase = RevisitConcertMemories(
+            repository: repository,
+            photoStorage: MockConcertPhotoStorage()
+        )
+
+        let results = try useCase.execute(concertID: concertID)
+
+        XCTAssertEqual(results, [later, earlier])
+    }
 }
+

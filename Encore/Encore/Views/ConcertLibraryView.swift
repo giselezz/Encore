@@ -12,10 +12,14 @@ struct ConcertLibraryView: View {
     @State private var showingAddConcert = false
 
     private let recordConcert: RecordAttendedConcert
+    private let revisitMemories: RevisitConcertMemories
+    private let addMemory: AddConcertMemory
 
     init(
         browseHistory: BrowseConcertHistory,
-        recordConcert: RecordAttendedConcert
+        recordConcert: RecordAttendedConcert,
+        revisitMemories: RevisitConcertMemories,
+        addMemory: AddConcertMemory
     ) {
         _viewModel = StateObject(
             wrappedValue: ConcertLibraryViewModel(
@@ -23,6 +27,8 @@ struct ConcertLibraryView: View {
             )
         )
         self.recordConcert = recordConcert
+        self.revisitMemories = revisitMemories
+        self.addMemory = addMemory
     }
 
     var body: some View {
@@ -48,21 +54,29 @@ struct ConcertLibraryView: View {
                     )
                 } else {
                     List(viewModel.concerts) { concert in
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text(concert.artistName)
-                                .font(.headline)
-
-                            Text(concert.venueName)
-                                .font(.subheadline)
-
-                            Text(
-                                concert.concertDate,
-                                format: .dateTime.day().month().year()
+                        NavigationLink {
+                            ConcertDetailView(
+                                concert: concert,
+                                revisitMemories: revisitMemories,
+                                addMemory: addMemory
                             )
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                        } label: {
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text(concert.artistName)
+                                    .font(.headline)
+
+                                Text(concert.venueName)
+                                    .font(.subheadline)
+
+                                Text(
+                                    concert.concertDate,
+                                    format: .dateTime.day().month().year()
+                                )
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                            }
+                            .padding(.vertical, 4)
                         }
-                        .padding(.vertical, 4)
                     }
                 }
             }
@@ -113,12 +127,29 @@ struct ConcertLibraryView: View {
 }
 
 #Preview {
-    let repository = CoreDataConcertRepository(
-        container: PersistenceController.preview.container
+    let container = PersistenceController.preview.container
+
+    let concertRepository = CoreDataConcertRepository(
+        container: container
+    )
+    let memoryRepository = CoreDataConcertMemoryRepository(
+        container: container
     )
 
     ConcertLibraryView(
-        browseHistory: BrowseConcertHistory(repository: repository),
-        recordConcert: RecordAttendedConcert(repository: repository)
+        browseHistory: BrowseConcertHistory(
+            repository: concertRepository
+        ),
+        recordConcert: RecordAttendedConcert(
+            repository: concertRepository
+        ),
+        revisitMemories: RevisitConcertMemories(
+            repository: memoryRepository, 
+            photoStorage: LocalConcertPhotoStorage()
+        ),
+        addMemory: AddConcertMemory(
+            repository: memoryRepository, 
+            photoStorage: LocalConcertPhotoStorage()
+        )
     )
 }
