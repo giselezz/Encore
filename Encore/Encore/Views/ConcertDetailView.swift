@@ -62,6 +62,22 @@ struct ConcertDetailView: View {
                 } else {
                     ForEach(viewModel.memories) { memory in
                         VStack(alignment: .leading, spacing: 8) {
+                            if let image = viewModel.photos[memory.id] {
+                                Image(uiImage: image)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(maxHeight: 280)
+                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                                    .accessibilityLabel("Concert memory photo")
+                            } else if let photoError = viewModel.photoErrors[memory.id] {
+                                Text(photoError)
+                                    .foregroundStyle(.secondary)
+
+                                Button("Try Again") {
+                                    viewModel.loadMemories()
+                                }
+                            }
+                            
                             if let caption = memory.caption {
                                 Text(caption)
                             }
@@ -115,7 +131,8 @@ struct ConcertDetailView: View {
                 createdAt: Date()
             ),
             revisitMemories: RevisitConcertMemories(
-                repository: repository
+                repository: repository, 
+                photoStorage: LocalConcertPhotoStorage()
             ),
             addMemory: AddConcertMemory(
                 repository: repository, 

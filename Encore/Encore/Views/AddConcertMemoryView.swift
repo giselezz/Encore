@@ -32,7 +32,11 @@ struct AddConcertMemoryView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        let photoButtonTitle = viewModel.photoPreview == nil
+            ? "Add Photo"
+            : "Change Photo"
+
+        return NavigationStack {
             Form {
                 Section("Photo") {
                     if let image = viewModel.photoPreview {
@@ -51,12 +55,7 @@ struct AddConcertMemoryView: View {
                         selection: $selectedPhoto,
                         matching: .images
                     ) {
-                        Label(
-                            viewModel.photoPreview == nil
-                                ? "Add Photo"
-                                : "Change Photo",
-                            systemImage: "photo"
-                        )
+                        Label(photoButtonTitle, systemImage: "photo")
                     }
 
                     if selectedPhoto != nil {
