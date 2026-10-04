@@ -19,22 +19,32 @@ struct EncoreApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ConcertLibraryView(
-                browseHistory: BrowseConcertHistory(
-                    repository: concertRepository
-                ),
-                recordConcert: RecordAttendedConcert(
-                    repository: concertRepository
-                ),
-                revisitMemories: RevisitConcertMemories(
-                    repository: memoryRepository, 
-                    photoStorage: LocalConcertPhotoStorage()
-                ),
-                addMemory: AddConcertMemory(
-                    repository: memoryRepository, 
-                    photoStorage: LocalConcertPhotoStorage()
+            if PersistenceController.shared.startupError != nil {
+                ContentUnavailableView(
+                    "Concert library unavailable",
+                    systemImage: "externaldrive.badge.exclamationmark",
+                    description: Text(
+                        "Your journal couldn’t be opened. Close Encore and try again."
+                    )
                 )
-            )
+            } else {
+                ConcertLibraryView(
+                    browseHistory: BrowseConcertHistory(
+                        repository: concertRepository
+                    ),
+                    recordConcert: RecordAttendedConcert(
+                        repository: concertRepository
+                    ),
+                    revisitMemories: RevisitConcertMemories(
+                        repository: memoryRepository,
+                        photoStorage: LocalConcertPhotoStorage()
+                    ),
+                    addMemory: AddConcertMemory(
+                        repository: memoryRepository,
+                        photoStorage: LocalConcertPhotoStorage()
+                    )
+                )
+            }
         }
     }
 }

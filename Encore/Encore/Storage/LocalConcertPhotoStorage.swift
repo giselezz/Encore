@@ -9,16 +9,10 @@ import Foundation
 import UIKit
 
 struct LocalConcertPhotoStorage: ConcertPhotoStorage {
-    private let directory: URL
+    private let customDirectory: URL?
 
-    init(
-        directory: URL = URL.applicationSupportDirectory
-            .appendingPathComponent(
-                "ConcertPhotos",
-                isDirectory: true
-            )
-    ) {
-        self.directory = directory
+    init(directory: URL? = nil) {
+        customDirectory = directory
     }
 
     enum PhotoError: LocalizedError {
@@ -42,11 +36,6 @@ struct LocalConcertPhotoStorage: ConcertPhotoStorage {
         else {
             throw PhotoError.unreadablePhoto
         }
-
-        try FileManager.default.createDirectory(
-            at: directory,
-            withIntermediateDirectories: true
-        )
 
         let filename = UUID().uuidString + ".jpg"
         let destination = try photoURL(named: filename)
@@ -77,6 +66,19 @@ struct LocalConcertPhotoStorage: ConcertPhotoStorage {
             ) != nil
         else {
             throw PhotoError.invalidFilename
+        }
+
+        let directory: URL
+
+        if let customDirectory {
+            directory = customDirectory
+
+            try FileManager.default.createDirectory(
+                at: directory,
+                withIntermediateDirectories: true
+            )
+        } else {
+            directory = try EncoreSharedStorage.photoDirectoryURL()
         }
 
         return directory.appendingPathComponent(filename)

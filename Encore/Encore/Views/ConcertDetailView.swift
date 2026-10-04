@@ -10,6 +10,7 @@ import SwiftUI
 struct ConcertDetailView: View {
     @StateObject private var viewModel: ConcertDetailViewModel
     @State private var showingAddMemory = false
+    @Environment(\.scenePhase) private var scenePhase
 
     private let addMemory: AddConcertMemory
 
@@ -112,6 +113,11 @@ struct ConcertDetailView: View {
         }
         .onAppear {
             viewModel.loadMemories()
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase == .active {
+                viewModel.loadMemories()
+            }
         }
     }
 }
