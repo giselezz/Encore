@@ -76,6 +76,7 @@
 				ContentView.swift,
 				Domain/Concert.swift,
 				Domain/ConcertMoment.swift,
+				Domain/FeaturedConcertMemory.swift,
 				Encore.xcdatamodeld,
 				EncoreApp.swift,
 				Persistence.swift,
@@ -83,6 +84,8 @@
 				Repositories/ConcertRepository.swift,
 				Repositories/CoreDataConcertMemoryRepository.swift,
 				Repositories/CoreDataConcertRepository.swift,
+				Repositories/CoreDataFeaturedConcertMemoryRepository.swift,
+				Repositories/FeaturedConcertMemoryRepository.swift,
 				Shared/EncoreSharedStorage.swift,
 				Storage/ConcertPhotoStorage.swift,
 				Storage/LocalConcertPhotoStorage.swift,
@@ -108,6 +111,7 @@
 				ContentView.swift,
 				Domain/Concert.swift,
 				Domain/ConcertMoment.swift,
+				Domain/FeaturedConcertMemory.swift,
 				Encore.xcdatamodeld,
 				EncoreApp.swift,
 				Persistence.swift,
@@ -115,6 +119,8 @@
 				Repositories/ConcertRepository.swift,
 				Repositories/CoreDataConcertMemoryRepository.swift,
 				Repositories/CoreDataConcertRepository.swift,
+				Repositories/CoreDataFeaturedConcertMemoryRepository.swift,
+				Repositories/FeaturedConcertMemoryRepository.swift,
 				Shared/EncoreSharedStorage.swift,
 				Storage/ConcertPhotoStorage.swift,
 				Storage/LocalConcertPhotoStorage.swift,
@@ -166,6 +172,18 @@
 			);
 			target = 5EB926413072220B009D9A34 /* EncoreWidgetExtension */;
 		};
+		5EB926623073432D009D9A34 /* Exceptions for "Encore" folder in "EncoreWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Domain/FeaturedConcertMemory.swift,
+				Encore.xcdatamodeld,
+				Persistence.swift,
+				Repositories/CoreDataFeaturedConcertMemoryRepository.swift,
+				Repositories/FeaturedConcertMemoryRepository.swift,
+				Shared/EncoreSharedStorage.swift,
+			);
+			target = 5EB926413072220B009D9A34 /* EncoreWidgetExtension */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -185,6 +203,7 @@
 				5EB923E630679785009D9A34 /* Exceptions for "Encore" folder in "Encore" target */,
 				5EB923E830679785009D9A34 /* Exceptions for "Encore" folder in "EncoreTests" target */,
 				5EB925543071FEBA009D9A34 /* Exceptions for "Encore" folder in "EncoreShare" target */,
+				5EB926623073432D009D9A34 /* Exceptions for "Encore" folder in "EncoreWidgetExtension" target */,
 			);
 			path = Encore;
 			sourceTree = "<group>";
