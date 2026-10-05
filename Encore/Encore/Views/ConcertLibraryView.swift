@@ -14,12 +14,14 @@ struct ConcertLibraryView: View {
     private let recordConcert: RecordAttendedConcert
     private let revisitMemories: RevisitConcertMemories
     private let addMemory: AddConcertMemory
+    private let editConcert: EditConcert
 
     init(
         browseHistory: BrowseConcertHistory,
         recordConcert: RecordAttendedConcert,
         revisitMemories: RevisitConcertMemories,
-        addMemory: AddConcertMemory
+        addMemory: AddConcertMemory,
+        editConcert: EditConcert
     ) {
         _viewModel = StateObject(
             wrappedValue: ConcertLibraryViewModel(
@@ -29,6 +31,7 @@ struct ConcertLibraryView: View {
         self.recordConcert = recordConcert
         self.revisitMemories = revisitMemories
         self.addMemory = addMemory
+        self.editConcert = editConcert
     }
 
     var body: some View {
@@ -58,7 +61,8 @@ struct ConcertLibraryView: View {
                             ConcertDetailView(
                                 concert: concert,
                                 revisitMemories: revisitMemories,
-                                addMemory: addMemory
+                                addMemory: addMemory,
+                                editConcert: editConcert
                             )
                         } label: {
                             VStack(alignment: .leading, spacing: 6) {
@@ -150,6 +154,9 @@ struct ConcertLibraryView: View {
         addMemory: AddConcertMemory(
             repository: memoryRepository, 
             photoStorage: LocalConcertPhotoStorage()
+        ),
+        editConcert: EditConcert(
+            repository: concertRepository
         )
     )
 }

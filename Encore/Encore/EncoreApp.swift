@@ -9,8 +9,10 @@ import SwiftUI
 
 @main
 struct EncoreApp: App {
-    private let concertRepository = CoreDataConcertRepository(
-        container: PersistenceController.shared.container
+    private let concertRepository = WidgetRefreshingConcertRepository(
+        repository: CoreDataConcertRepository(
+            container: PersistenceController.shared.container
+        )
     )
 
     private let memoryRepository = WidgetRefreshingMemoryRepository(
@@ -44,6 +46,9 @@ struct EncoreApp: App {
                     addMemory: AddConcertMemory(
                         repository: memoryRepository,
                         photoStorage: LocalConcertPhotoStorage()
+                    ),
+                    editConcert: EditConcert(
+                        repository: concertRepository
                     )
                 )
             }

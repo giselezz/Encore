@@ -86,6 +86,7 @@
 				Repositories/CoreDataConcertRepository.swift,
 				Repositories/CoreDataFeaturedConcertMemoryRepository.swift,
 				Repositories/FeaturedConcertMemoryRepository.swift,
+				Repositories/WidgetRefreshingConcertRepository.swift,
 				Repositories/WidgetRefreshingMemoryRepository.swift,
 				Shared/EncoreSharedStorage.swift,
 				Storage/ConcertPhotoStorage.swift,
@@ -99,10 +100,12 @@
 				ViewModels/AddConcertViewModel.swift,
 				ViewModels/ConcertDetailViewModel.swift,
 				ViewModels/ConcertLibraryViewModel.swift,
+				ViewModels/EditConcertViewModel.swift,
 				Views/AddConcertMemoryView.swift,
 				Views/AddConcertView.swift,
 				Views/ConcertDetailView.swift,
 				Views/ConcertLibraryView.swift,
+				Views/EditConcertView.swift,
 			);
 			target = 5EB923793067911B009D9A34 /* Encore */;
 		};
@@ -123,6 +126,7 @@
 				Repositories/CoreDataConcertRepository.swift,
 				Repositories/CoreDataFeaturedConcertMemoryRepository.swift,
 				Repositories/FeaturedConcertMemoryRepository.swift,
+				Repositories/WidgetRefreshingConcertRepository.swift,
 				Repositories/WidgetRefreshingMemoryRepository.swift,
 				Shared/EncoreSharedStorage.swift,
 				Storage/ConcertPhotoStorage.swift,
@@ -136,10 +140,12 @@
 				ViewModels/AddConcertViewModel.swift,
 				ViewModels/ConcertDetailViewModel.swift,
 				ViewModels/ConcertLibraryViewModel.swift,
+				ViewModels/EditConcertViewModel.swift,
 				Views/AddConcertMemoryView.swift,
 				Views/AddConcertView.swift,
 				Views/ConcertDetailView.swift,
 				Views/ConcertLibraryView.swift,
+				Views/EditConcertView.swift,
 			);
 			target = 5EB9238B3067911C009D9A34 /* EncoreTests */;
 		};

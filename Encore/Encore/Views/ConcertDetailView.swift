@@ -11,13 +11,16 @@ struct ConcertDetailView: View {
     @StateObject private var viewModel: ConcertDetailViewModel
     @State private var showingAddMemory = false
     @Environment(\.scenePhase) private var scenePhase
+    @State private var showingEditConcert = false
 
+    private let editConcert: EditConcert
     private let addMemory: AddConcertMemory
 
     init(
         concert: Concert,
         revisitMemories: RevisitConcertMemories,
-        addMemory: AddConcertMemory
+        addMemory: AddConcertMemory,
+        editConcert: EditConcert
     ) {
         _viewModel = StateObject(
             wrappedValue: ConcertDetailViewModel(
@@ -25,7 +28,9 @@ struct ConcertDetailView: View {
                 revisitMemories: revisitMemories
             )
         )
+
         self.addMemory = addMemory
+        self.editConcert = editConcert
     }
 
     var body: some View {
@@ -103,6 +108,21 @@ struct ConcertDetailView: View {
         }
         .navigationTitle(viewModel.concert.artistName)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button("Edit") {
+                    showingEditConcert = true
+                }
+            }
+        }
+        .sheet(isPresented: $showingEditConcert) {
+            EditConcertView(
+                concert: viewModel.concert,
+                editConcert: editConcert
+            ) { updatedConcert in
+                viewModel.updateConcert(updatedConcert)
+            }
+        }
         .sheet(isPresented: $showingAddMemory) {
             AddConcertMemoryView(
                 concert: viewModel.concert,
@@ -143,6 +163,11 @@ struct ConcertDetailView: View {
             addMemory: AddConcertMemory(
                 repository: repository, 
                 photoStorage: LocalConcertPhotoStorage()
+            ),
+            editConcert: EditConcert(
+                repository: CoreDataConcertRepository(
+                    container: PersistenceController.preview.container
+                )
             )
         )
     }
