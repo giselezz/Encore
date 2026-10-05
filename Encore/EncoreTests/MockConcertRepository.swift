@@ -15,6 +15,8 @@ enum MockStorageError: Error {
 final class MockConcertRepository: ConcertRepository {
     var concerts: [Concert] = []
     var shouldFailSave = false
+    var shouldFailDelete = false
+    var photoFilenamesByConcert: [UUID: [String]] = [:]
 
     func saveConcert(_ concert: Concert) throws {
         if shouldFailSave {
@@ -38,6 +40,20 @@ final class MockConcertRepository: ConcertRepository {
         try fetchConcerts().filter {
             $0.concertDate >= startDate && $0.concertDate < endDate
         }
+    }
+    
+    func deleteConcert(id: UUID) throws -> [String] {
+        if shouldFailDelete {
+            throw MockStorageError.simulatedFailure
+        }
+
+        guard concerts.contains(where: { $0.id == id }) else {
+            return []
+        }
+
+        concerts.removeAll { $0.id == id }
+
+        return photoFilenamesByConcert.removeValue(forKey: id) ?? []
     }
 }
 

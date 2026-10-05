@@ -769,5 +769,228 @@ final class EncoreTests: XCTestCase {
         XCTAssertTrue(repository.memories.isEmpty)
         XCTAssertTrue(photoStorage.deletedPhotoFilenames.isEmpty)
     }
+    
+    func testDeletingConcertRemovesItsPhotosAndKeepsOtherConcerts() throws {
+        let repository = MockConcertRepository()
+        let photoStorage = MockConcertPhotoStorage()
+        let date = Date(timeIntervalSince1970: 1_700_000_000)
+
+        let concert = Concert(
+            id: UUID(),
+            artistName: "Bad Bunny",
+            venueName: "Engie Stadium",
+            concertDate: date,
+            createdAt: date
+        )
+
+        let otherConcert = Concert(
+            id: UUID(),
+            artistName: "Taylor Swift",
+            venueName: "Accor Stadium",
+            concertDate: date,
+            createdAt: date
+        )
+
+        repository.concerts = [concert, otherConcert]
+        repository.photoFilenamesByConcert[concert.id] = [
+            "first.jpg",
+            "second.jpg"
+        ]
+        repository.photoFilenamesByConcert[otherConcert.id] = [
+            "keep.jpg"
+        ]
+
+        photoStorage.photos = [
+            "first.jpg": Data([1]),
+            "second.jpg": Data([2]),
+            "keep.jpg": Data([3])
+        ]
+
+        let useCase = DeleteConcert(
+            repository: repository,
+            photoStorage: photoStorage
+        )
+
+        let outcome = try useCase.execute(
+            concertID: concert.id,
+            confirmed: true
+        )
+
+        XCTAssertEqual(outcome, .deleted)
+        XCTAssertEqual(repository.concerts, [otherConcert])
+        XCTAssertNil(repository.photoFilenamesByConcert[concert.id])
+        XCTAssertEqual(
+            repository.photoFilenamesByConcert[otherConcert.id],
+            ["keep.jpg"]
+        )
+        XCTAssertEqual(photoStorage.photos, ["keep.jpg": Data([3])])
+    }
+
+    func testDeletingConcertRequiresConfirmation() {
+        let repository = MockConcertRepository()
+        let photoStorage = MockConcertPhotoStorage()
+        let date = Date(timeIntervalSince1970: 1_700_000_000)
+
+        let concert = Concert(
+            id: UUID(),
+            artistName: "Bad Bunny",
+            venueName: "Engie Stadium",
+            concertDate: date,
+            createdAt: date
+        )
+
+        repository.concerts = [concert]
+        repository.photoFilenamesByConcert[concert.id] = ["photo.jpg"]
+        photoStorage.photos["photo.jpg"] = Data([1])
+
+        let useCase = DeleteConcert(
+            repository: repository,
+            photoStorage: photoStorage
+        )
+
+        XCTAssertThrowsError(
+            try useCase.execute(
+                concertID: concert.id,
+                confirmed: false
+            )
+        ) { error in
+            XCTAssertEqual(
+                error as? DeleteConcert.DeletionError,
+                .confirmationRequired
+            )
+        }
+
+        XCTAssertEqual(repository.concerts, [concert])
+        XCTAssertEqual(
+            repository.photoFilenamesByConcert[concert.id],
+            ["photo.jpg"]
+        )
+        XCTAssertEqual(photoStorage.photos["photo.jpg"], Data([1]))
+        XCTAssertTrue(photoStorage.deletedPhotoFilenames.isEmpty)
+    }
+
+    func testFailedConcertDeletionKeepsConcertAndPhotos() {
+        let repository = MockConcertRepository()
+        let photoStorage = MockConcertPhotoStorage()
+        repository.shouldFailDelete = true
+
+        let date = Date(timeIntervalSince1970: 1_700_000_000)
+
+        let concert = Concert(
+            id: UUID(),
+            artistName: "Bad Bunny",
+            venueName: "Engie Stadium",
+            concertDate: date,
+            createdAt: date
+        )
+
+        repository.concerts = [concert]
+        repository.photoFilenamesByConcert[concert.id] = ["photo.jpg"]
+        photoStorage.photos["photo.jpg"] = Data([1])
+
+        let useCase = DeleteConcert(
+            repository: repository,
+            photoStorage: photoStorage
+        )
+
+        XCTAssertThrowsError(
+            try useCase.execute(
+                concertID: concert.id,
+                confirmed: true
+            )
+        ) { error in
+            XCTAssertEqual(
+                error as? DeleteConcert.DeletionError,
+                .deletionFailed
+            )
+        }
+
+        XCTAssertEqual(repository.concerts, [concert])
+        XCTAssertEqual(
+            repository.photoFilenamesByConcert[concert.id],
+            ["photo.jpg"]
+        )
+        XCTAssertEqual(photoStorage.photos["photo.jpg"], Data([1]))
+        XCTAssertTrue(photoStorage.deletedPhotoFilenames.isEmpty)
+    }
+
+    func testConcertPhotoCleanupCanBeRetriedAfterDeletion() throws {
+        let repository = MockConcertRepository()
+        let photoStorage = MockConcertPhotoStorage()
+        photoStorage.shouldFailDelete = true
+
+        let date = Date(timeIntervalSince1970: 1_700_000_000)
+
+        let concert = Concert(
+            id: UUID(),
+            artistName: "Bad Bunny",
+            venueName: "Engie Stadium",
+            concertDate: date,
+            createdAt: date
+        )
+
+        repository.concerts = [concert]
+        repository.photoFilenamesByConcert[concert.id] = ["photo.jpg"]
+        photoStorage.photos["photo.jpg"] = Data([1])
+
+        let useCase = DeleteConcert(
+            repository: repository,
+            photoStorage: photoStorage
+        )
+
+        let outcome = try useCase.execute(
+            concertID: concert.id,
+            confirmed: true
+        )
+
+        XCTAssertTrue(repository.concerts.isEmpty)
+        XCTAssertEqual(photoStorage.photos["photo.jpg"], Data([1]))
+
+        guard case .photoCleanupRequired(let filenames) = outcome else {
+            XCTFail("Expected photo cleanup to need a retry")
+            return
+        }
+
+        XCTAssertEqual(filenames, ["photo.jpg"])
+
+        photoStorage.shouldFailDelete = false
+
+        let retryOutcome = useCase.retryPhotoCleanup(
+            filenames: filenames
+        )
+
+        XCTAssertEqual(retryOutcome, .deleted)
+        XCTAssertTrue(photoStorage.photos.isEmpty)
+    }
+
+    func testDeletingConcertWithoutPhotosSucceeds() throws {
+        let repository = MockConcertRepository()
+        let photoStorage = MockConcertPhotoStorage()
+        let date = Date(timeIntervalSince1970: 1_700_000_000)
+
+        let concert = Concert(
+            id: UUID(),
+            artistName: "Bad Bunny",
+            venueName: "Engie Stadium",
+            concertDate: date,
+            createdAt: date
+        )
+
+        repository.concerts = [concert]
+
+        let useCase = DeleteConcert(
+            repository: repository,
+            photoStorage: photoStorage
+        )
+
+        let outcome = try useCase.execute(
+            concertID: concert.id,
+            confirmed: true
+        )
+
+        XCTAssertEqual(outcome, .deleted)
+        XCTAssertTrue(repository.concerts.isEmpty)
+        XCTAssertTrue(photoStorage.deletedPhotoFilenames.isEmpty)
+    }
 }
 

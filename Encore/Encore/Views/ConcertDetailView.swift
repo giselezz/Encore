@@ -20,12 +20,14 @@ struct ConcertDetailView: View {
         concert: Concert,
         revisitMemories: RevisitConcertMemories,
         addMemory: AddConcertMemory,
-        editConcert: EditConcert
+        editConcert: EditConcert,
+        deleteMemory: DeleteConcertMemory
     ) {
         _viewModel = StateObject(
             wrappedValue: ConcertDetailViewModel(
                 concert: concert,
-                revisitMemories: revisitMemories
+                revisitMemories: revisitMemories,
+                deleteMemory: deleteMemory
             )
         )
 
@@ -51,6 +53,17 @@ struct ConcertDetailView: View {
                         viewModel.concert.concertDate,
                         format: .dateTime.day().month().year()
                     )
+                }
+            }
+            
+            if let message = viewModel.deletionErrorMessage {
+                Section("Memory removal") {
+                    Text(message)
+                        .foregroundStyle(.red)
+
+                    Button("Retry") {
+                        viewModel.retryMemoryDeletion()
+                    }
                 }
             }
 
@@ -96,6 +109,14 @@ struct ConcertDetailView: View {
                             .foregroundStyle(.secondary)
                         }
                         .padding(.vertical, 4)
+                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                            Button(role: .destructive) {
+                                viewModel.removeMemory(memory)
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                            .disabled(viewModel.pendingDeletion != nil)
+                        }
                     }
                 }
 
@@ -168,6 +189,10 @@ struct ConcertDetailView: View {
                 repository: CoreDataConcertRepository(
                     container: PersistenceController.preview.container
                 )
+            ), 
+            deleteMemory: DeleteConcertMemory(
+                repository: repository,
+                photoStorage: LocalConcertPhotoStorage()
             )
         )
     }

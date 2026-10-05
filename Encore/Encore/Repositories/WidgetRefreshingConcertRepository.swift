@@ -42,4 +42,12 @@ struct WidgetRefreshingConcertRepository: ConcertRepository {
             to: endDate
         )
     }
+    
+    func deleteConcert(id: UUID) throws -> [String] {
+        let photoFilenames = try repository.deleteConcert(id: id)
+
+        reloadWidget()
+
+        return photoFilenames
+    }
 }
