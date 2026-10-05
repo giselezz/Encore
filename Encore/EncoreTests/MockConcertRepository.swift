@@ -14,8 +14,12 @@ enum MockStorageError: Error {
 
 final class MockConcertRepository: ConcertRepository {
     var concerts: [Concert] = []
+    var shouldFailSave = false
 
     func saveConcert(_ concert: Concert) throws {
+        if shouldFailSave {
+            throw MockStorageError.simulatedFailure
+        }
         if let index = concerts.firstIndex(where: { $0.id == concert.id }) {
             concerts[index] = concert
         } else {

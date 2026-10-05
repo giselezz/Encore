@@ -15,8 +15,7 @@ final class ConcertDetailViewModel: ObservableObject {
     @Published private(set) var errorMessage: String?
     @Published private(set) var photos: [UUID: UIImage] = [:]
     @Published private(set) var photoErrors: [UUID: String] = [:]
-
-    let concert: Concert
+    @Published private(set) var concert: Concert
 
     private let revisitMemories: RevisitConcertMemories
 
@@ -26,6 +25,11 @@ final class ConcertDetailViewModel: ObservableObject {
     ) {
         self.concert = concert
         self.revisitMemories = revisitMemories
+    }
+    
+    func updateConcert(_ updatedConcert: Concert) {
+        guard updatedConcert.id == concert.id else { return }
+        concert = updatedConcert
     }
 
     func loadMemories() {
