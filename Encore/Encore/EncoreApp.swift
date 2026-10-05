@@ -53,6 +53,9 @@ struct EncoreApp: App {
                     deleteMemory: DeleteConcertMemory(
                         repository: memoryRepository,
                         photoStorage: LocalConcertPhotoStorage()
+                    ), deleteConcert: DeleteConcert(
+                        repository: concertRepository,
+                        photoStorage: LocalConcertPhotoStorage()
                     )
                 )
             }

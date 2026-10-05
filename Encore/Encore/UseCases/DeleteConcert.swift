@@ -33,7 +33,7 @@ struct DeleteConcert {
         }
     }
 
-    enum Outcome: Equatable {
+    nonisolated enum Outcome: Equatable, Sendable {
         case deleted
         case photoCleanupRequired([String])
     }

@@ -18,18 +18,24 @@ final class ConcertDetailViewModel: ObservableObject {
     @Published private(set) var concert: Concert
     @Published private(set) var deletionErrorMessage: String?
     @Published private(set) var pendingDeletion: ConcertMoment?
+    @Published private(set) var concertDeletionErrorMessage: String?
+    @Published private(set) var hasDeletedConcert = false
 
     private let revisitMemories: RevisitConcertMemories
     private let deleteMemory: DeleteConcertMemory
+    private let deleteConcert: DeleteConcert
+    private var remainingPhotoFilenames: [String] = []
 
     init(
         concert: Concert,
         revisitMemories: RevisitConcertMemories,
-        deleteMemory: DeleteConcertMemory
+        deleteMemory: DeleteConcertMemory,
+        deleteConcert: DeleteConcert
     ) {
         self.concert = concert
         self.revisitMemories = revisitMemories
         self.deleteMemory = deleteMemory
+        self.deleteConcert = deleteConcert
     }
     
     func updateConcert(_ updatedConcert: Concert) {
@@ -73,6 +79,7 @@ final class ConcertDetailViewModel: ObservableObject {
     }
 
     func loadMemories() {
+        guard !hasDeletedConcert else { return }
         errorMessage = nil
         photos = [:]
         photoErrors = [:]
@@ -110,6 +117,69 @@ final class ConcertDetailViewModel: ObservableObject {
                 photoErrors[memory.id] =
                     "This concert photo couldn’t be opened. Tap Try Again to reload it."
             }
+        }
+    }
+    
+    func removeConcert() -> Bool {
+        guard !hasDeletedConcert else { return false }
+
+        guard pendingDeletion == nil else {
+            concertDeletionErrorMessage =
+                "Finish retrying the memory removal above before deleting this concert."
+            return false
+        }
+
+        concertDeletionErrorMessage = nil
+
+        do {
+            let outcome = try deleteConcert.execute(
+                concertID: concert.id,
+                confirmed: true
+            )
+
+            hasDeletedConcert = true
+            memories = []
+            photos = [:]
+            photoErrors = [:]
+            errorMessage = nil
+
+            return handleConcertDeletionOutcome(outcome)
+        } catch let error as DeleteConcert.DeletionError {
+            concertDeletionErrorMessage = error.errorDescription
+            return false
+        } catch {
+            concertDeletionErrorMessage =
+                "This concert couldn’t be deleted. Please try again."
+            return false
+        }
+    }
+
+    func retryConcertPhotoCleanup() -> Bool {
+        guard hasDeletedConcert else { return false }
+
+        let outcome = deleteConcert.retryPhotoCleanup(
+            filenames: remainingPhotoFilenames
+        )
+
+        return handleConcertDeletionOutcome(outcome)
+    }
+
+    private func handleConcertDeletionOutcome(
+        _ outcome: DeleteConcert.Outcome
+    ) -> Bool {
+        switch outcome {
+        case .deleted:
+            remainingPhotoFilenames = []
+            concertDeletionErrorMessage = nil
+            return true
+
+        case .photoCleanupRequired(let filenames):
+            remainingPhotoFilenames = filenames
+            concertDeletionErrorMessage = """
+            The concert and its memories were deleted, but some photo \
+            files couldn’t be cleared. Tap Retry Photo Cleanup.
+            """
+            return false
         }
     }
 }

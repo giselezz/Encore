@@ -16,6 +16,7 @@ struct ConcertLibraryView: View {
     private let addMemory: AddConcertMemory
     private let editConcert: EditConcert
     private let deleteMemory: DeleteConcertMemory
+    private let deleteConcert: DeleteConcert
 
     init(
         browseHistory: BrowseConcertHistory,
@@ -23,7 +24,8 @@ struct ConcertLibraryView: View {
         revisitMemories: RevisitConcertMemories,
         addMemory: AddConcertMemory,
         editConcert: EditConcert,
-        deleteMemory: DeleteConcertMemory
+        deleteMemory: DeleteConcertMemory,
+        deleteConcert: DeleteConcert
     ) {
         _viewModel = StateObject(
             wrappedValue: ConcertLibraryViewModel(
@@ -35,6 +37,7 @@ struct ConcertLibraryView: View {
         self.addMemory = addMemory
         self.editConcert = editConcert
         self.deleteMemory = deleteMemory
+        self.deleteConcert = deleteConcert
     }
 
     var body: some View {
@@ -66,7 +69,11 @@ struct ConcertLibraryView: View {
                                 revisitMemories: revisitMemories,
                                 addMemory: addMemory,
                                 editConcert: editConcert,
-                                deleteMemory: deleteMemory
+                                deleteMemory: deleteMemory,
+                                deleteConcert: deleteConcert,
+                                onDeleted: {
+                                    viewModel.loadConcerts()
+                                }
                             )
                         } label: {
                             VStack(alignment: .leading, spacing: 6) {
@@ -164,6 +171,10 @@ struct ConcertLibraryView: View {
         ),
         deleteMemory: DeleteConcertMemory(
             repository: memoryRepository,
+            photoStorage: LocalConcertPhotoStorage()
+        ),
+        deleteConcert: DeleteConcert(
+            repository: concertRepository,
             photoStorage: LocalConcertPhotoStorage()
         )
     )
