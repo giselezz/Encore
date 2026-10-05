@@ -442,5 +442,139 @@ final class EncoreTests: XCTestCase {
         XCTAssertTrue(repository.memories.isEmpty)
         XCTAssertEqual(refreshCount, 0)
     }
+    
+    func testEditingConcertUpdatesDetailsWithoutCreatingDuplicate() throws {
+        let repository = MockConcertRepository()
+        let date = Date(timeIntervalSince1970: 1_700_000_000)
+
+        let original = Concert(
+            id: UUID(),
+            artistName: "Original artist",
+            venueName: "Original venue",
+            concertDate: date,
+            createdAt: date
+        )
+
+        repository.concerts = [original]
+
+        let useCase = EditConcert(repository: repository)
+        let correctedDate = date.addingTimeInterval(-86_400)
+
+        let updated = try useCase.execute(
+            concert: original,
+            artistName: "  Bad Bunny  ",
+            venueName: "  Engie Stadium  ",
+            concertDate: correctedDate,
+            now: date
+        )
+
+        XCTAssertEqual(updated.id, original.id)
+        XCTAssertEqual(updated.createdAt, original.createdAt)
+        XCTAssertEqual(updated.artistName, "Bad Bunny")
+        XCTAssertEqual(updated.venueName, "Engie Stadium")
+        XCTAssertEqual(updated.concertDate, correctedDate)
+
+        // Exactly one concert remains, containing the updated details.
+        XCTAssertEqual(repository.concerts, [updated])
+    }
+
+    func testEditingConcertRejectsInvalidDetails() {
+        let repository = MockConcertRepository()
+        let date = Date(timeIntervalSince1970: 1_700_000_000)
+
+        let original = Concert(
+            id: UUID(),
+            artistName: "Bad Bunny",
+            venueName: "Engie Stadium",
+            concertDate: date,
+            createdAt: date
+        )
+
+        repository.concerts = [original]
+        let useCase = EditConcert(repository: repository)
+
+        let invalidChanges: [
+            (
+                artist: String,
+                venue: String,
+                date: Date,
+                expectedError: EditConcert.EditingError
+            )
+        ] = [
+            (
+                artist: " \n ",
+                venue: "Engie Stadium",
+                date: date,
+                expectedError: .missingArtist
+            ),
+            (
+                artist: "Bad Bunny",
+                venue: " \n ",
+                date: date,
+                expectedError: .missingVenue
+            ),
+            (
+                artist: "Bad Bunny",
+                venue: "Engie Stadium",
+                date: date.addingTimeInterval(86_400),
+                expectedError: .futureConcertDate
+            )
+        ]
+
+        for change in invalidChanges {
+            XCTAssertThrowsError(
+                try useCase.execute(
+                    concert: original,
+                    artistName: change.artist,
+                    venueName: change.venue,
+                    concertDate: change.date,
+                    now: date
+                )
+            ) { error in
+                XCTAssertEqual(
+                    error as? EditConcert.EditingError,
+                    change.expectedError
+                )
+            }
+
+            // Invalid input must leave the saved concert unchanged.
+            XCTAssertEqual(repository.concerts, [original])
+        }
+    }
+
+    func testEditingConcertReportsSaveFailure() {
+        let repository = MockConcertRepository()
+        let date = Date(timeIntervalSince1970: 1_700_000_000)
+
+        let original = Concert(
+            id: UUID(),
+            artistName: "Bad Bunny",
+            venueName: "Original venue",
+            concertDate: date,
+            createdAt: date
+        )
+
+        repository.concerts = [original]
+        repository.shouldFailSave = true
+
+        let useCase = EditConcert(repository: repository)
+
+        XCTAssertThrowsError(
+            try useCase.execute(
+                concert: original,
+                artistName: "Bad Bunny",
+                venueName: "Corrected venue",
+                concertDate: date,
+                now: date
+            )
+        ) { error in
+            XCTAssertEqual(
+                error as? EditConcert.EditingError,
+                .savingFailed
+            )
+        }
+
+        XCTAssertEqual(repository.concerts, [original])
+    }
 }
 
