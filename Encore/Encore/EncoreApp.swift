@@ -13,8 +13,10 @@ struct EncoreApp: App {
         container: PersistenceController.shared.container
     )
 
-    private let memoryRepository = CoreDataConcertMemoryRepository(
-        container: PersistenceController.shared.container
+    private let memoryRepository = WidgetRefreshingMemoryRepository(
+        repository: CoreDataConcertMemoryRepository(
+            container: PersistenceController.shared.container
+        )
     )
 
     var body: some Scene {

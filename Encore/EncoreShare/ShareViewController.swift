@@ -171,8 +171,10 @@ final class ShareViewController: UIViewController {
             container: persistence.container
         )
 
-        let memoryRepository = CoreDataConcertMemoryRepository(
-            container: persistence.container
+        let memoryRepository = WidgetRefreshingMemoryRepository(
+            repository: CoreDataConcertMemoryRepository(
+                container: persistence.container
+            )
         )
 
         let viewModel = ShareConcertViewModel(

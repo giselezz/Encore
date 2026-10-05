@@ -382,5 +382,65 @@ final class EncoreTests: XCTestCase {
 
         XCTAssertEqual(results, [later, earlier])
     }
+    
+    func testSavingMemoryRefreshesWidgetAfterSaving() throws {
+        let repository = MockConcertMemoryRepository()
+        var refreshCount = 0
+
+        let memory = ConcertMoment(
+            id: UUID(),
+            concertID: UUID(),
+            caption: "An unforgettable concert",
+            photoFilename: nil,
+            createdAt: Date(timeIntervalSince1970: 1_700_000_000)
+        )
+
+        let refreshingRepository = WidgetRefreshingMemoryRepository(
+            repository: repository,
+            reloadWidget: {
+                // The memory must already be saved before refreshing.
+                XCTAssertEqual(repository.memories, [memory])
+                refreshCount += 1
+            }
+        )
+
+        try refreshingRepository.saveMemory(memory)
+
+        XCTAssertEqual(repository.memories, [memory])
+        XCTAssertEqual(refreshCount, 1)
+    }
+
+    func testFailedMemorySaveDoesNotRefreshWidget() {
+        let repository = MockConcertMemoryRepository()
+        repository.shouldFailSave = true
+        var refreshCount = 0
+
+        let refreshingRepository = WidgetRefreshingMemoryRepository(
+            repository: repository,
+            reloadWidget: {
+                refreshCount += 1
+            }
+        )
+
+        let memory = ConcertMoment(
+            id: UUID(),
+            concertID: UUID(),
+            caption: "An unforgettable concert",
+            photoFilename: nil,
+            createdAt: Date(timeIntervalSince1970: 1_700_000_000)
+        )
+
+        XCTAssertThrowsError(
+            try refreshingRepository.saveMemory(memory)
+        ) { error in
+            guard case MockStorageError.simulatedFailure = error else {
+                XCTFail("Expected the original storage error, got \(error)")
+                return
+            }
+        }
+
+        XCTAssertTrue(repository.memories.isEmpty)
+        XCTAssertEqual(refreshCount, 0)
+    }
 }
 
