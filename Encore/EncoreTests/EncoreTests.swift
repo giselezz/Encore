@@ -576,5 +576,198 @@ final class EncoreTests: XCTestCase {
 
         XCTAssertEqual(repository.concerts, [original])
     }
+    
+    func testDeletingMemoryRemovesItsPhotoAndPreservesOtherMemories() throws {
+        let repository = MockConcertMemoryRepository()
+        let photoStorage = MockConcertPhotoStorage()
+        let concertID = UUID()
+        let date = Date(timeIntervalSince1970: 1_700_000_000)
+
+        let memory = ConcertMoment(
+            id: UUID(),
+            concertID: concertID,
+            caption: "Delete this memory",
+            photoFilename: "first.jpg",
+            createdAt: date
+        )
+
+        let otherMemory = ConcertMoment(
+            id: UUID(),
+            concertID: concertID,
+            caption: "Keep this memory",
+            photoFilename: "second.jpg",
+            createdAt: date
+        )
+
+        repository.memories = [memory, otherMemory]
+        photoStorage.photos["first.jpg"] = Data([1])
+        photoStorage.photos["second.jpg"] = Data([2])
+
+        let useCase = DeleteConcertMemory(
+            repository: repository,
+            photoStorage: photoStorage
+        )
+
+        try useCase.execute(
+            memory: memory,
+            concertID: concertID
+        )
+
+        XCTAssertEqual(repository.memories, [otherMemory])
+        XCTAssertNil(photoStorage.photos["first.jpg"])
+        XCTAssertEqual(photoStorage.photos["second.jpg"], Data([2]))
+        XCTAssertEqual(photoStorage.deletedPhotoFilenames, ["first.jpg"])
+    }
+
+    func testDeletingMemoryFromWrongConcertIsRejected() {
+        let repository = MockConcertMemoryRepository()
+        let photoStorage = MockConcertPhotoStorage()
+
+        let memory = ConcertMoment(
+            id: UUID(),
+            concertID: UUID(),
+            caption: "Keep this memory",
+            photoFilename: "photo.jpg",
+            createdAt: Date()
+        )
+
+        repository.memories = [memory]
+        photoStorage.photos["photo.jpg"] = Data([1])
+
+        let useCase = DeleteConcertMemory(
+            repository: repository,
+            photoStorage: photoStorage
+        )
+
+        XCTAssertThrowsError(
+            try useCase.execute(
+                memory: memory,
+                concertID: UUID()
+            )
+        ) { error in
+            XCTAssertEqual(
+                error as? DeleteConcertMemory.DeletionError,
+                .concertMismatch
+            )
+        }
+
+        XCTAssertEqual(repository.memories, [memory])
+        XCTAssertEqual(photoStorage.photos["photo.jpg"], Data([1]))
+        XCTAssertTrue(photoStorage.deletedPhotoFilenames.isEmpty)
+    }
+
+    func testFailedMemoryDeletionKeepsMemoryAndPhoto() {
+        let repository = MockConcertMemoryRepository()
+        let photoStorage = MockConcertPhotoStorage()
+        repository.shouldFailDelete = true
+
+        let memory = ConcertMoment(
+            id: UUID(),
+            concertID: UUID(),
+            caption: "Keep this memory",
+            photoFilename: "photo.jpg",
+            createdAt: Date()
+        )
+
+        repository.memories = [memory]
+        photoStorage.photos["photo.jpg"] = Data([1])
+
+        let useCase = DeleteConcertMemory(
+            repository: repository,
+            photoStorage: photoStorage
+        )
+
+        XCTAssertThrowsError(
+            try useCase.execute(
+                memory: memory,
+                concertID: memory.concertID
+            )
+        ) { error in
+            XCTAssertEqual(
+                error as? DeleteConcertMemory.DeletionError,
+                .deletionFailed
+            )
+        }
+
+        XCTAssertEqual(repository.memories, [memory])
+        XCTAssertEqual(photoStorage.photos["photo.jpg"], Data([1]))
+        XCTAssertTrue(photoStorage.deletedPhotoFilenames.isEmpty)
+    }
+
+    func testPhotoCleanupFailureCanBeRetriedAfterMemoryDeletion() throws {
+        let repository = MockConcertMemoryRepository()
+        let photoStorage = MockConcertPhotoStorage()
+        photoStorage.shouldFailDelete = true
+
+        let memory = ConcertMoment(
+            id: UUID(),
+            concertID: UUID(),
+            caption: "Remove this memory",
+            photoFilename: "photo.jpg",
+            createdAt: Date()
+        )
+
+        repository.memories = [memory]
+        photoStorage.photos["photo.jpg"] = Data([1])
+
+        let useCase = DeleteConcertMemory(
+            repository: repository,
+            photoStorage: photoStorage
+        )
+
+        XCTAssertThrowsError(
+            try useCase.execute(
+                memory: memory,
+                concertID: memory.concertID
+            )
+        ) { error in
+            XCTAssertEqual(
+                error as? DeleteConcertMemory.DeletionError,
+                .photoCleanupFailed
+            )
+        }
+
+        XCTAssertTrue(repository.memories.isEmpty)
+        XCTAssertEqual(photoStorage.photos["photo.jpg"], Data([1]))
+
+        // Retry using the retained memory information.
+        photoStorage.shouldFailDelete = false
+
+        try useCase.execute(
+            memory: memory,
+            concertID: memory.concertID
+        )
+
+        XCTAssertTrue(repository.memories.isEmpty)
+        XCTAssertNil(photoStorage.photos["photo.jpg"])
+    }
+
+    func testDeletingTextOnlyMemoryDoesNotDeleteAnyPhoto() throws {
+        let repository = MockConcertMemoryRepository()
+        let photoStorage = MockConcertPhotoStorage()
+
+        let memory = ConcertMoment(
+            id: UUID(),
+            concertID: UUID(),
+            caption: "A written memory",
+            photoFilename: nil,
+            createdAt: Date()
+        )
+
+        repository.memories = [memory]
+
+        let useCase = DeleteConcertMemory(
+            repository: repository,
+            photoStorage: photoStorage
+        )
+
+        try useCase.execute(
+            memory: memory,
+            concertID: memory.concertID
+        )
+
+        XCTAssertTrue(repository.memories.isEmpty)
+        XCTAssertTrue(photoStorage.deletedPhotoFilenames.isEmpty)
+    }
 }
 

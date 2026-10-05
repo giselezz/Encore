@@ -44,6 +44,7 @@ final class MockConcertRepository: ConcertRepository {
 final class MockConcertMemoryRepository: ConcertMemoryRepository {
     var memories: [ConcertMoment] = []
     var shouldFailSave = false
+    var shouldFailDelete = false
 
     func saveMemory(_ memory: ConcertMoment) throws {
         if shouldFailSave {
@@ -65,12 +66,23 @@ final class MockConcertMemoryRepository: ConcertMemoryRepository {
             .filter { $0.concertID == concertID }
             .sorted { $0.createdAt > $1.createdAt }
     }
+    
+    func deleteMemory(id: UUID, concertID: UUID) throws {
+        if shouldFailDelete {
+            throw MockStorageError.simulatedFailure
+        }
+
+        memories.removeAll {
+            $0.id == id && $0.concertID == concertID
+        }
+    }
 }
 
 final class MockConcertPhotoStorage: ConcertPhotoStorage {
     var photos: [String: Data] = [:]
     var shouldFailSave = false
     var deletedPhotoFilenames: [String] = []
+    var shouldFailDelete = false
 
     func savePhoto(_ data: Data) throws -> String {
         if shouldFailSave {
@@ -90,6 +102,10 @@ final class MockConcertPhotoStorage: ConcertPhotoStorage {
     }
 
     func deletePhoto(named filename: String) throws {
+        if shouldFailDelete {
+            throw MockStorageError.simulatedFailure
+        }
+
         deletedPhotoFilenames.append(filename)
         photos.removeValue(forKey: filename)
     }

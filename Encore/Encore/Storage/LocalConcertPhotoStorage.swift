@@ -55,7 +55,14 @@ struct LocalConcertPhotoStorage: ConcertPhotoStorage {
 
     func deletePhoto(named filename: String) throws {
         let url = try photoURL(named: filename)
-        try FileManager.default.removeItem(at: url)
+
+        do {
+            try FileManager.default.removeItem(at: url)
+        } catch let error as CocoaError
+            where error.code == .fileNoSuchFile {
+            // An already-removed photo needs no further cleanup.
+            return
+        }
     }
 
     private func photoURL(named filename: String) throws -> URL {
