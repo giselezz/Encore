@@ -9,6 +9,50 @@ import Foundation
 import CoreData
 
 final class CoreDataConcertRepository: ConcertRepository {
+    func deleteConcert(id: UUID) throws -> [String] {
+        try context.performAndWait {
+            do {
+                let concertRequest = NSFetchRequest<ConcertEntry>(
+                    entityName: "ConcertEntry"
+                )
+                concertRequest.predicate = NSPredicate(
+                    format: "id == %@",
+                    id as NSUUID
+                )
+                concertRequest.fetchLimit = 1
+
+                guard let concert = try context.fetch(
+                    concertRequest
+                ).first else {
+                    return []
+                }
+
+                let memoryRequest = NSFetchRequest<ConcertMemory>(
+                    entityName: "ConcertMemory"
+                )
+                memoryRequest.predicate = NSPredicate(
+                    format: "concert == %@",
+                    concert
+                )
+
+                let memories = try context.fetch(memoryRequest)
+
+                let photoFilenames = memories.compactMap {
+                    $0.photoFilename
+                }
+
+                // The Cascade relationship also removes its memories.
+                context.delete(concert)
+                try context.save()
+
+                return photoFilenames
+            } catch {
+                context.rollback()
+                throw error
+            }
+        }
+    }
+    
     private let context: NSManagedObjectContext
 
     init(container: NSPersistentContainer) {

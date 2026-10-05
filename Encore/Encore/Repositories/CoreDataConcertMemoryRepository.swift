@@ -96,6 +96,33 @@ final class CoreDataConcertMemoryRepository: ConcertMemoryRepository {
             }
         }
     }
+    
+    func deleteMemory(id: UUID, concertID: UUID) throws {
+        try context.performAndWait {
+            do {
+                let request = NSFetchRequest<ConcertMemory>(
+                    entityName: "ConcertMemory"
+                )
+
+                request.predicate = NSPredicate(
+                    format: "id == %@ AND concert.id == %@",
+                    id as NSUUID,
+                    concertID as NSUUID
+                )
+                request.fetchLimit = 1
+
+                guard let entry = try context.fetch(request).first else {
+                    return
+                }
+
+                context.delete(entry)
+                try context.save()
+            } catch {
+                context.rollback()
+                throw error
+            }
+        }
+    }
 
     private func makeMemory(
         from entry: ConcertMemory

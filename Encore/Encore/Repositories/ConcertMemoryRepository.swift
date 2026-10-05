@@ -13,4 +13,6 @@ protocol ConcertMemoryRepository {
     func fetchMemories(
         for concertID: UUID
     ) throws -> [ConcertMoment]
+    
+    func deleteMemory(id: UUID, concertID: UUID) throws
 }

@@ -16,4 +16,6 @@ protocol ConcertRepository {
         from startDate: Date,
         to endDate: Date
     ) throws -> [Concert]
+    
+    func deleteConcert(id: UUID) throws -> [String]
 }

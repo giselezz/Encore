@@ -15,13 +15,17 @@ struct ConcertLibraryView: View {
     private let revisitMemories: RevisitConcertMemories
     private let addMemory: AddConcertMemory
     private let editConcert: EditConcert
+    private let deleteMemory: DeleteConcertMemory
+    private let deleteConcert: DeleteConcert
 
     init(
         browseHistory: BrowseConcertHistory,
         recordConcert: RecordAttendedConcert,
         revisitMemories: RevisitConcertMemories,
         addMemory: AddConcertMemory,
-        editConcert: EditConcert
+        editConcert: EditConcert,
+        deleteMemory: DeleteConcertMemory,
+        deleteConcert: DeleteConcert
     ) {
         _viewModel = StateObject(
             wrappedValue: ConcertLibraryViewModel(
@@ -32,6 +36,8 @@ struct ConcertLibraryView: View {
         self.revisitMemories = revisitMemories
         self.addMemory = addMemory
         self.editConcert = editConcert
+        self.deleteMemory = deleteMemory
+        self.deleteConcert = deleteConcert
     }
 
     var body: some View {
@@ -62,7 +68,12 @@ struct ConcertLibraryView: View {
                                 concert: concert,
                                 revisitMemories: revisitMemories,
                                 addMemory: addMemory,
-                                editConcert: editConcert
+                                editConcert: editConcert,
+                                deleteMemory: deleteMemory,
+                                deleteConcert: deleteConcert,
+                                onDeleted: {
+                                    viewModel.loadConcerts()
+                                }
                             )
                         } label: {
                             VStack(alignment: .leading, spacing: 6) {
@@ -157,6 +168,14 @@ struct ConcertLibraryView: View {
         ),
         editConcert: EditConcert(
             repository: concertRepository
+        ),
+        deleteMemory: DeleteConcertMemory(
+            repository: memoryRepository,
+            photoStorage: LocalConcertPhotoStorage()
+        ),
+        deleteConcert: DeleteConcert(
+            repository: concertRepository,
+            photoStorage: LocalConcertPhotoStorage()
         )
     )
 }

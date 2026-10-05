@@ -34,4 +34,13 @@ struct WidgetRefreshingMemoryRepository: ConcertMemoryRepository {
     ) throws -> [ConcertMoment] {
         try repository.fetchMemories(for: concertID)
     }
+    
+    func deleteMemory(id: UUID, concertID: UUID) throws {
+        try repository.deleteMemory(
+            id: id,
+            concertID: concertID
+        )
+
+        reloadWidget()
+    }
 }

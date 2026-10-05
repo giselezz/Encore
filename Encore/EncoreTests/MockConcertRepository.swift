@@ -15,6 +15,8 @@ enum MockStorageError: Error {
 final class MockConcertRepository: ConcertRepository {
     var concerts: [Concert] = []
     var shouldFailSave = false
+    var shouldFailDelete = false
+    var photoFilenamesByConcert: [UUID: [String]] = [:]
 
     func saveConcert(_ concert: Concert) throws {
         if shouldFailSave {
@@ -39,11 +41,26 @@ final class MockConcertRepository: ConcertRepository {
             $0.concertDate >= startDate && $0.concertDate < endDate
         }
     }
+    
+    func deleteConcert(id: UUID) throws -> [String] {
+        if shouldFailDelete {
+            throw MockStorageError.simulatedFailure
+        }
+
+        guard concerts.contains(where: { $0.id == id }) else {
+            return []
+        }
+
+        concerts.removeAll { $0.id == id }
+
+        return photoFilenamesByConcert.removeValue(forKey: id) ?? []
+    }
 }
 
 final class MockConcertMemoryRepository: ConcertMemoryRepository {
     var memories: [ConcertMoment] = []
     var shouldFailSave = false
+    var shouldFailDelete = false
 
     func saveMemory(_ memory: ConcertMoment) throws {
         if shouldFailSave {
@@ -65,12 +82,23 @@ final class MockConcertMemoryRepository: ConcertMemoryRepository {
             .filter { $0.concertID == concertID }
             .sorted { $0.createdAt > $1.createdAt }
     }
+    
+    func deleteMemory(id: UUID, concertID: UUID) throws {
+        if shouldFailDelete {
+            throw MockStorageError.simulatedFailure
+        }
+
+        memories.removeAll {
+            $0.id == id && $0.concertID == concertID
+        }
+    }
 }
 
 final class MockConcertPhotoStorage: ConcertPhotoStorage {
     var photos: [String: Data] = [:]
     var shouldFailSave = false
     var deletedPhotoFilenames: [String] = []
+    var shouldFailDelete = false
 
     func savePhoto(_ data: Data) throws -> String {
         if shouldFailSave {
@@ -90,6 +118,10 @@ final class MockConcertPhotoStorage: ConcertPhotoStorage {
     }
 
     func deletePhoto(named filename: String) throws {
+        if shouldFailDelete {
+            throw MockStorageError.simulatedFailure
+        }
+
         deletedPhotoFilenames.append(filename)
         photos.removeValue(forKey: filename)
     }
